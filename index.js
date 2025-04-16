@@ -66,7 +66,7 @@ app.get("/api/categories/:categoryId", async (req, res) => {
     if (!categoryData)
       res.status(404).json({
         error:
-          "Error fetching category by ID. Either no category present or some other error. Please try again.",
+          "Error fetching category by ID. Either no category present or some other error. Please try again with correct ID.",
       });
     else res.status(200).json({ data: { category: categoryData } });
   } catch (error) {
@@ -76,6 +76,65 @@ app.get("/api/categories/:categoryId", async (req, res) => {
     });
   }
 });
+
+//Route to add Product entry in the database.
+app.post("/api/products", async (req, res) => {
+  try {
+    const product = new Product(req.body);
+    const saveProduct = await product.save();
+    if (!saveProduct) {
+      console.log(saveProduct);
+      res.status(404).json({
+        error:
+          "Please check data format and try again. Check logs for more details",
+      });
+    } else res.status(200).json({ message: "Product Added Successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+});
+
+//Route to fetch all products from the database.
+app.get("/api/products", async (req, res) => {
+  try {
+    // const productsData = await Product.find().populate('category');
+    const productsData = await Product.find().populate('category', 'categoryName');
+    if (!productsData)
+      res.status(404).json({
+        error:
+          "Error fetching Products. Either no product present or some other error. Please try again.",
+      });
+    else res.status(200).json({ data: { products: productsData } });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+});
+
+//Route to fetch Product from the database by its ID.
+app.get("/api/products/:productId", async(req, res) => {
+  try{
+    const productData = await Product.findById(req.params.productId);
+    if (!productData)
+      res.status(404).json({
+        error:
+          "Error fetching product by ID. Either no product present or some other error. Please try again with correct ID.",
+      });
+    else res.status(200).json({ data: { product: productData } });
+  } catch(err) {
+    console.log(err);
+    req.status(500).json({
+      error: "Some error occurred with the request itself. Please check the logs and try again."
+    })
+  }
+})
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
