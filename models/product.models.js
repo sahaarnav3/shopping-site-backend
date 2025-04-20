@@ -33,6 +33,10 @@ const productSchema = new mongoose.Schema({
     type: [String],
     required: true
   },
+  imageLink: {
+    type: String,
+    required: true
+  },
   addedToWishlist: {
     type: Boolean,
     default: false
