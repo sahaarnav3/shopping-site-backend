@@ -154,7 +154,7 @@ app.get("/api/products/by-category/:category", async (req, res) => {
         error:
           "Error fetching product by ID. Either no product present or some other error. Please try again with correct ID.",
       });
-    else res.status(200).json({ data: { product: productData } });
+    else res.status(200).json({ data: { products: productData } });
   } catch (err) {
     console.log(err);
     req.status(500).json({
