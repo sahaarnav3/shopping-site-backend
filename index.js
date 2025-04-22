@@ -102,7 +102,10 @@ app.post("/api/products", async (req, res) => {
 app.get("/api/products", async (req, res) => {
   try {
     // const productsData = await Product.find().populate('category');
-    const productsData = await Product.find().populate('category', 'categoryName');
+    const productsData = await Product.find().populate(
+      "category",
+      "categoryName"
+    );
     if (!productsData)
       res.status(404).json({
         error:
@@ -119,8 +122,8 @@ app.get("/api/products", async (req, res) => {
 });
 
 //Route to fetch Product from the database by its ID.
-app.get("/api/products/:productId", async(req, res) => {
-  try{
+app.get("/api/products/:productId", async (req, res) => {
+  try {
     const productData = await Product.findById(req.params.productId);
     if (!productData)
       res.status(404).json({
@@ -128,13 +131,38 @@ app.get("/api/products/:productId", async(req, res) => {
           "Error fetching product by ID. Either no product present or some other error. Please try again with correct ID.",
       });
     else res.status(200).json({ data: { product: productData } });
-  } catch(err) {
+  } catch (err) {
     console.log(err);
     req.status(500).json({
-      error: "Some error occurred with the request itself. Please check the logs and try again."
-    })
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
   }
-})
+});
+
+//Route to fetch products according to category.
+app.get("/api/products/by-category/:category", async (req, res) => {
+  try {
+    const categoryData = await Category.findOne({ categoryName: req.params.category });
+    if (!categoryData)
+      return res
+        .status(404)
+        .json({ message: `Category '${req.params.category}' not found.` });
+    const productData = await Product.find({ category: categoryData._id });
+    if (!productData)
+      res.status(404).json({
+        error:
+          "Error fetching product by ID. Either no product present or some other error. Please try again with correct ID.",
+      });
+    else res.status(200).json({ data: { product: productData } });
+  } catch (err) {
+    console.log(err);
+    req.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
