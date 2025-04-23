@@ -143,7 +143,9 @@ app.get("/api/products/:productId", async (req, res) => {
 //Route to fetch products according to category.
 app.get("/api/products/by-category/:category", async (req, res) => {
   try {
-    const categoryData = await Category.findOne({ categoryName: req.params.category });
+    const categoryData = await Category.findOne({
+      categoryName: req.params.category,
+    });
     if (!categoryData)
       return res
         .status(404)
@@ -155,6 +157,41 @@ app.get("/api/products/by-category/:category", async (req, res) => {
           "Error fetching product by ID. Either no product present or some other error. Please try again with correct ID.",
       });
     else res.status(200).json({ data: { products: productData } });
+  } catch (err) {
+    console.log(err);
+    req.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
+  }
+});
+
+//Route to add/remove (toggle) product from wishlist with product ID.
+app.patch("/api/products/toggle-wishlist/:productId", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.productId);
+    if (!product)
+      return res
+        .status(404)
+        .json({ message: "Product not found. Try again with correct ID" });
+
+    const updateObject = {
+      $set: {
+        addedToWishlist: !product.addedToWishlist,
+      },
+    };
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.productId,
+      updateObject,
+      { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
+    );
+    if(!updatedProduct)
+      res.status(404).json({
+        error:
+          "Error toggling wishlist status. Try again.",
+      });
+      else 
+        res.status(200).json({ message: "Wishlist Status Toggled Successfully."})
   } catch (err) {
     console.log(err);
     req.status(500).json({
