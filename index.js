@@ -185,14 +185,34 @@ app.patch("/api/products/toggle-wishlist/:productId", async (req, res) => {
       updateObject,
       { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
     );
-    if(!updatedProduct)
+    if (!updatedProduct)
+      res.status(404).json({
+        error: "Error toggling wishlist status. Try again.",
+      });
+    else
+      res
+        .status(200)
+        .json({ message: "Wishlist Status Toggled Successfully." });
+  } catch (err) {
+    console.log(err);
+    req.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
+  }
+});
+
+//Route to fetch only those products which are present in wishlist
+app.get("/api/products/wishlist-items/wishlist", async (req, res) => {
+  try {
+    const productData = await Product.find({ addedToWishlist: true });
+    if (!productData)
       res.status(404).json({
         error:
-          "Error toggling wishlist status. Try again.",
+          "Error fetching product by wishlist. Check logs and please try again.",
       });
-      else 
-        res.status(200).json({ message: "Wishlist Status Toggled Successfully."})
-  } catch (err) {
+    else res.status(200).json({ data: { product: productData } });
+  } catch (error) {
     console.log(err);
     req.status(500).json({
       error:
