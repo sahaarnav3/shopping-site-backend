@@ -43,7 +43,6 @@ const productSchema = new mongoose.Schema({
   },
   addedToCart: {
     size: [String],
-    enum: ['S', 'M', 'L', 'XL', 'XXL']
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
