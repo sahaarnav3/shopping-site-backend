@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema({
     default: false
   },
   addedToCart: {
-    size: [String],
+    type: [String],
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
