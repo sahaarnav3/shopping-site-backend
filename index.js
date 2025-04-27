@@ -221,6 +221,78 @@ app.get("/api/products/wishlist-items/wishlist", async (req, res) => {
   }
 });
 
+//To add a product with particular specification ( could be size or anything else) in cart
+app.post("/api/products/add-to-cart/:productId/:specs", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.productId);
+    if (!product)
+      return res
+        .status(404)
+        .json({ message: "Product not found. Try again with correct ID" });
+
+    const updateObject = {
+      $set: {
+        addedToCart: [...product.addedToCart, req.params.specs],
+      },
+    };
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.productId,
+      updateObject,
+      { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
+    );
+    if (!updatedProduct)
+      res.status(404).json({
+        error: "Error adding product to cart. Please try again.",
+      });
+    else
+      res
+        .status(200)
+        .json({ message: "Item Added To Cart Successfully." });
+  } catch (err) {
+    console.log(err);
+    req.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
+  }
+});
+
+//To remove a product with particular specification ( could be size or anything else) from cart
+app.post("/api/products/remove-from-cart/:productId/:specs", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.productId);
+    if (!product)
+      return res
+        .status(404)
+        .json({ message: "Product not found. Try again with correct ID" });
+
+    const updateObject = {
+      $set: {
+        addedToCart: product.addedToCart.filter(size => size != req.params.specs),
+      },
+    };
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.productId,
+      updateObject,
+      { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
+    );
+    if (!updatedProduct)
+      res.status(404).json({
+        error: "Error removing product from cart. Please try again.",
+      });
+    else
+      res
+        .status(200)
+        .json({ message: "Item Removed From Cart Successfully." });
+  } catch (err) {
+    console.log(err);
+    req.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check the logs and try again.",
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
 });
