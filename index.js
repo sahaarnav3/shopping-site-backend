@@ -244,10 +244,7 @@ app.post("/api/products/add-to-cart/:productId/:specs", async (req, res) => {
       res.status(404).json({
         error: "Error adding product to cart. Please try again.",
       });
-    else
-      res
-        .status(200)
-        .json({ message: "Item Added To Cart Successfully." });
+    else res.status(200).json({ message: "Item Added To Cart Successfully." });
   } catch (err) {
     console.log(err);
     req.status(500).json({
@@ -258,34 +255,63 @@ app.post("/api/products/add-to-cart/:productId/:specs", async (req, res) => {
 });
 
 //To remove a product with particular specification ( could be size or anything else) from cart
-app.post("/api/products/remove-from-cart/:productId/:specs", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.productId);
-    if (!product)
-      return res
-        .status(404)
-        .json({ message: "Product not found. Try again with correct ID" });
+app.post(
+  "/api/products/remove-from-cart/:productId/:specs",
+  async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.productId);
+      if (!product)
+        return res
+          .status(404)
+          .json({ message: "Product not found. Try again with correct ID" });
 
-    const updateObject = {
-      $set: {
-        addedToCart: product.addedToCart.filter(size => size != req.params.specs),
+      const updateObject = {
+        $set: {
+          addedToCart: product.addedToCart.filter(
+            (size) => size != req.params.specs
+          ),
+        },
+      };
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.productId,
+        updateObject,
+        { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
+      );
+      if (!updatedProduct)
+        res.status(404).json({
+          error: "Error removing product from cart. Please try again.",
+        });
+      else
+        res
+          .status(200)
+          .json({ message: "Item Removed From Cart Successfully." });
+    } catch (err) {
+      console.log(err);
+      req.status(500).json({
+        error:
+          "Some error occurred with the request itself. Please check the logs and try again.",
+      });
+    }
+  }
+);
+
+//Route to fetch all products present in cart.
+app.get("/api/products/get-cart-items/cart", async (req, res) => {
+  try {
+    const productsInCart = await Product.find({
+      addedToCart: { $exists: true }, // Optional: Ensure the field exists
+      $expr: {
+        $gt: [{ $size: "$addedToCart" }, 0],
       },
-    };
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.productId,
-      updateObject,
-      { new: true, runValidators: true } // new: true will return new updated object. runValidator to run and follow the rules you mention in Schema.
-    );
-    if (!updatedProduct)
+    });
+    if (!productsInCart)
       res.status(404).json({
-        error: "Error removing product from cart. Please try again.",
+        error: "Error fetching items in cart. Please try again.",
       });
     else
-      res
-        .status(200)
-        .json({ message: "Item Removed From Cart Successfully." });
-  } catch (err) {
-    console.log(err);
+      res.status(200).json({ cartItems: productsInCart });
+  } catch (error) {
+    console.log(error);
     req.status(500).json({
       error:
         "Some error occurred with the request itself. Please check the logs and try again.",
