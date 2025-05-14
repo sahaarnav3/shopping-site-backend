@@ -7,6 +7,7 @@ const cors = require("cors");
 const { initialiseDatabase } = require("./db/db.connect");
 const Product = require("./models/product.models");
 const Category = require("./models/category.models");
+const Address = require("./models/address.models");
 
 const corsOption = {
   origin: "*",
@@ -308,8 +309,7 @@ app.get("/api/products/get-cart-items/cart", async (req, res) => {
       res.status(404).json({
         error: "Error fetching items in cart. Please try again.",
       });
-    else
-      res.status(200).json({ cartItems: productsInCart });
+    else res.status(200).json({ cartItems: productsInCart });
   } catch (error) {
     console.log(error);
     req.status(500).json({
@@ -318,6 +318,63 @@ app.get("/api/products/get-cart-items/cart", async (req, res) => {
     });
   }
 });
+
+//Route to add new address
+app.post("/api/address/add-new-address", async (req, res) => {
+  try {
+    const address = new Address(req.body);
+    const saveAddress = await address.save();
+    if (!saveAddress)
+      res.status(404).json({
+        error:
+          "Please check data format and try again. Check logs for more details",
+      });
+    else res.status(200).json({ message: "Address Added Successfully." });
+  } catch (error) {
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself or some entry is missing. Please check logs and try again.",
+    });
+  }
+});
+
+//Route to fetch all addresses
+app.get("/api/address/get-all-address", async(req, res) => {
+  try {
+    const addressData = await Address.find();
+    if (!addressData)
+      res.status(404).json({
+        error:
+          "Error fetching Addresses. Either no Address present or some other error. Please try again.",
+      });
+    else res.status(200).json({ addresses: addressData });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+})
+
+//Route to delete address
+app.delete("/api/address/delete-address/:addressID", async(req, res) => {
+  try {
+    const addressData = await Address.findOneAndDelete(req.params.addressID);
+    if (!addressData)
+      res.status(404).json({
+        error:
+          "Error deleting Addresses. Either no Address present or some other error. Please try again.",
+      });
+    else res.status(200).json({ message: "Address Deleted Successfully." });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+})
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
