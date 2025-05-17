@@ -27,7 +27,6 @@ const addressSchema = new mongoose.Schema({
     },
     defaultAddress: {
         type: Boolean,
-        required: true,
         default: false
     }
 });
