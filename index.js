@@ -331,6 +331,7 @@ app.post("/api/address/add-new-address", async (req, res) => {
       });
     else res.status(200).json({ message: "Address Added Successfully." });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error:
         "Some error occurred with the request itself or some entry is missing. Please check logs and try again.",
