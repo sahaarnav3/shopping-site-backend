@@ -339,7 +339,7 @@ app.post("/api/address/add-new-address", async (req, res) => {
 });
 
 //Route to fetch all addresses
-app.get("/api/address/get-all-address", async(req, res) => {
+app.get("/api/address/get-all-address", async (req, res) => {
   try {
     const addressData = await Address.find();
     if (!addressData)
@@ -355,10 +355,10 @@ app.get("/api/address/get-all-address", async(req, res) => {
         "Some error occurred with the request itself. Please check logs and try again.",
     });
   }
-})
+});
 
 //Route to delete address
-app.delete("/api/address/delete-address/:addressID", async(req, res) => {
+app.delete("/api/address/delete-address/:addressID", async (req, res) => {
   try {
     const addressData = await Address.findOneAndDelete(req.params.addressID);
     if (!addressData)
@@ -374,7 +374,38 @@ app.delete("/api/address/delete-address/:addressID", async(req, res) => {
         "Some error occurred with the request itself. Please check logs and try again.",
     });
   }
-})
+});
+
+//Route to edit default address.
+app.patch("/api/address/edit-default/:addressID", async (req, res) => {
+  try {
+    const existingDefault = await Address.findOneAndUpdate(
+      { defaultAddress: true },
+      { defaultAddress: false }
+    );
+    const newDefault = await Address.findByIdAndUpdate(
+      req.params.addressID,
+      { defaultAddress: true }, //include other fields in the update as well if needed
+      { new: true } // Return the updated document
+    );
+    if (!newDefault) {
+      res
+        .status(400)
+        .json({
+          message:
+            "Given address not found or some other error occurred. Check logs.",
+        });
+    }
+    else 
+      res.status(200).json({ message: "Default Address Updated Successfully."});
+  } catch (error) {
+    console.error("Error setting default address:", error);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);

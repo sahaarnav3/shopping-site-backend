@@ -17,6 +17,7 @@
 |   To remove a product with particular specification ( could be size or anything else) from cart   | `POST` | /api/products/remove-from-cart/:`productId`/:`specs` |
 |   Route to fetch all products present in cart.   | `GET` | /api/products/get-cart-items/cart |
 |    |  | |
-|   Route to add new address   | `POST` | /api/address/add-new-address |
-|   Route to fetch all addresses   | `GET` | api/address/get-all-address |
-|   Route to delete address   | `DELETE` | /api/address/delete-address/`:addressID` |
+|   Route to add new address.   | `POST` | /api/address/add-new-address |
+|   Route to fetch all addresses.   | `GET` | api/address/get-all-address |
+|   Route to delete address.   | `DELETE` | /api/address/delete-address/`:addressID` |
+|   Route to edit default address.  | `PATCH` | /api/address/edit-default/`:addressID` |
