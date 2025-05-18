@@ -361,7 +361,7 @@ app.get("/api/address/get-all-address", async (req, res) => {
 //Route to delete address
 app.delete("/api/address/delete-address/:addressID", async (req, res) => {
   try {
-    const addressData = await Address.findOneAndDelete(req.params.addressID);
+    const addressData = await Address.findByIdAndDelete(req.params.addressID);
     if (!addressData)
       res.status(404).json({
         error:
