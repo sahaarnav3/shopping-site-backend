@@ -296,6 +296,8 @@ app.post(
   }
 );
 
+//Route to remove all items from cart.
+
 //Route to fetch all products present in cart.
 app.get("/api/products/get-cart-items/cart", async (req, res) => {
   try {
@@ -377,7 +379,7 @@ app.delete("/api/address/delete-address/:addressID", async (req, res) => {
   }
 });
 
-//Route to edit default address.
+//Route to change default address.
 app.patch("/api/address/edit-default/:addressID", async (req, res) => {
   try {
     const existingDefault = await Address.findOneAndUpdate(
@@ -390,17 +392,35 @@ app.patch("/api/address/edit-default/:addressID", async (req, res) => {
       { new: true } // Return the updated document
     );
     if (!newDefault) {
+      res.status(400).json({
+        message:
+          "Given address not found or some other error occurred. Check logs.",
+      });
+    } else
       res
-        .status(400)
-        .json({
-          message:
-            "Given address not found or some other error occurred. Check logs.",
-        });
-    }
-    else 
-      res.status(200).json({ message: "Default Address Updated Successfully."});
+        .status(200)
+        .json({ message: "Default Address Updated Successfully." });
   } catch (error) {
     console.error("Error setting default address:", error);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+});
+
+//Route to fetch the default address.
+app.get("/api/address/fetch-default-address", async (req, res) => {
+  try {
+    const addressData = await Address.findOne({ defaultAddress: true });
+    if (!addressData)
+      res.status(404).json({
+        error:
+          "Error fetching Default Addresses. Either no Address present or some other error. Please try again.",
+      });
+    else res.status(200).json({ addresses: addressData });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         "Some error occurred with the request itself. Please check logs and try again.",
