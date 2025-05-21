@@ -297,8 +297,6 @@ app.post(
   }
 );
 
-//Route to remove all items from cart.
-
 //Route to fetch all products present in cart.
 app.get("/api/products/get-cart-items/cart", async (req, res) => {
   try {
@@ -321,6 +319,32 @@ app.get("/api/products/get-cart-items/cart", async (req, res) => {
     });
   }
 });
+
+//Route to remove all items from cart. (Basically changing the status of addedToCart of all products to empty array.)
+app.patch("/api/products/remove-all-cart-items", async(req, res) => {
+  try {
+    const existingDefault = await Product.updateMany(
+      { addedToCart: { $exists: true, $ne: [] } },
+      { $set: { addedToCart: [] } }
+    );
+    if (!existingDefault) {
+      res.status(400).json({
+        message:
+          "Cart items couldn't be cleared. Check logs.",
+      });
+    } else
+      res
+        .status(200)
+        .json({ message: "Cart Empty !" });
+  } catch (error) {
+    console.log("Error clearing out cart:", error);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+})
+
 
 //Route to add new address
 app.post("/api/address/add-new-address", async (req, res) => {
