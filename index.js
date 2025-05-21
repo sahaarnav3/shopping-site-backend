@@ -8,6 +8,7 @@ const { initialiseDatabase } = require("./db/db.connect");
 const Product = require("./models/product.models");
 const Category = require("./models/category.models");
 const Address = require("./models/address.models");
+const Order = require("./models/order.models");
 
 const corsOption = {
   origin: "*",
@@ -427,6 +428,45 @@ app.get("/api/address/fetch-default-address", async (req, res) => {
     });
   }
 });
+
+//Route to create a new Order Entry
+app.post("/api/orders/create-new-order", async (req, res) => {
+  try {
+    const order = new Order(req.body);
+    const saveOrder = await order.save();
+    if (!saveOrder)
+      res.status(404).json({
+        error:
+          "Please check data format and try again. Check logs for more details",
+      });
+    else res.status(200).json({ message: "Order Added Successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself or some entry is missing. Please check logs and try again.",
+    });
+  }
+});
+
+//Route to Fetch all past orders.
+app.get("/api/orders/get-all-orders", async(req, res) => {
+  try {
+    const orderData = await Order.find();
+    if (!orderData)
+      res.status(404).json({
+        error:
+          "Error fetching Orders. Either no Order present or some other error. Please try again.",
+      });
+    else res.status(200).json({ orders: orderData });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error:
+        "Some error occurred with the request itself. Please check logs and try again.",
+    });
+  }
+})
 
 app.listen(PORT, () => {
   console.log("Server is running on PORT:", PORT);
