@@ -476,7 +476,7 @@ app.post("/api/orders/create-new-order", async (req, res) => {
 //Route to Fetch all past orders.
 app.get("/api/orders/get-all-orders", async(req, res) => {
   try {
-    const orderData = await Order.find();
+    const orderData = await Order.find().populate('products.product', 'shortTitle finalPrice');
     if (!orderData)
       res.status(404).json({
         error:
