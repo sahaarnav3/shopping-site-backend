@@ -143,7 +143,7 @@ app.get("/api/products/:productId", async (req, res) => {
 });
 
 //Route to fetch products according to category.
-app.get("/api/products/by-category/:category", async (req, res) => {
+app.get("/api/products/by_category/:category", async (req, res) => {
   try {
     const categoryData = await Category.findOne({
       categoryName: req.params.category,
@@ -169,7 +169,7 @@ app.get("/api/products/by-category/:category", async (req, res) => {
 });
 
 //Route to add/remove (toggle) product from wishlist with product ID.
-app.patch("/api/products/toggle-wishlist/:productId", async (req, res) => {
+app.patch("/api/products/toggle_wishlist/:productId", async (req, res) => {
   try {
     const product = await Product.findById(req.params.productId);
     if (!product)
@@ -205,7 +205,7 @@ app.patch("/api/products/toggle-wishlist/:productId", async (req, res) => {
 });
 
 //Route to fetch only those products which are present in wishlist
-app.get("/api/products/wishlist-items/wishlist", async (req, res) => {
+app.get("/api/products/wishlist_items/wishlist", async (req, res) => {
   try {
     const productData = await Product.find({ addedToWishlist: true });
     if (!productData)
@@ -224,7 +224,7 @@ app.get("/api/products/wishlist-items/wishlist", async (req, res) => {
 });
 
 //To add a product with particular specification ( could be size or anything else) in cart
-app.post("/api/products/add-to-cart/:productId/:specs", async (req, res) => {
+app.post("/api/products/add_to_cart/:productId/:specs", async (req, res) => {
   try {
     const product = await Product.findById(req.params.productId);
     if (!product)
@@ -258,7 +258,7 @@ app.post("/api/products/add-to-cart/:productId/:specs", async (req, res) => {
 
 //To remove a product with particular specification ( could be size or anything else) from cart
 app.post(
-  "/api/products/remove-from-cart/:productId/:specs",
+  "/api/products/remove_from_cart/:productId/:specs",
   async (req, res) => {
     try {
       const product = await Product.findById(req.params.productId);
@@ -298,7 +298,7 @@ app.post(
 );
 
 //Route to fetch all products present in cart.
-app.get("/api/products/get-cart-items/cart", async (req, res) => {
+app.get("/api/products/get_cart_items/cart", async (req, res) => {
   try {
     const productsInCart = await Product.find({
       addedToCart: { $exists: true }, // Optional: Ensure the field exists
@@ -321,7 +321,7 @@ app.get("/api/products/get-cart-items/cart", async (req, res) => {
 });
 
 //Route to remove all items from cart. (Basically changing the status of addedToCart of all products to empty array.)
-app.patch("/api/products/remove-all-cart-items", async(req, res) => {
+app.patch("/api/products/remove_all_cart_items", async(req, res) => {
   try {
     const existingDefault = await Product.updateMany(
       { addedToCart: { $exists: true, $ne: [] } },
@@ -347,7 +347,7 @@ app.patch("/api/products/remove-all-cart-items", async(req, res) => {
 
 
 //Route to add new address
-app.post("/api/address/add-new-address", async (req, res) => {
+app.post("/api/address/add_new_address", async (req, res) => {
   try {
     const address = new Address(req.body);
     const saveAddress = await address.save();
@@ -367,7 +367,7 @@ app.post("/api/address/add-new-address", async (req, res) => {
 });
 
 //Route to fetch all addresses
-app.get("/api/address/get-all-address", async (req, res) => {
+app.get("/api/address/get_all_address", async (req, res) => {
   try {
     const addressData = await Address.find();
     if (!addressData)
@@ -386,7 +386,7 @@ app.get("/api/address/get-all-address", async (req, res) => {
 });
 
 //Route to delete address
-app.delete("/api/address/delete-address/:addressID", async (req, res) => {
+app.delete("/api/address/delete_address/:addressID", async (req, res) => {
   try {
     const addressData = await Address.findByIdAndDelete(req.params.addressID);
     if (!addressData)
@@ -405,7 +405,7 @@ app.delete("/api/address/delete-address/:addressID", async (req, res) => {
 });
 
 //Route to change default address.
-app.patch("/api/address/edit-default/:addressID", async (req, res) => {
+app.patch("/api/address/edit_default/:addressID", async (req, res) => {
   try {
     const existingDefault = await Address.findOneAndUpdate(
       { defaultAddress: true },
@@ -435,7 +435,7 @@ app.patch("/api/address/edit-default/:addressID", async (req, res) => {
 });
 
 //Route to fetch the default address.
-app.get("/api/address/fetch-default-address", async (req, res) => {
+app.get("/api/address/fetch_default_address", async (req, res) => {
   try {
     const addressData = await Address.findOne({ defaultAddress: true });
     if (!addressData)
@@ -454,7 +454,7 @@ app.get("/api/address/fetch-default-address", async (req, res) => {
 });
 
 //Route to create a new Order Entry
-app.post("/api/orders/create-new-order", async (req, res) => {
+app.post("/api/orders/create_new_order", async (req, res) => {
   try {
     const order = new Order(req.body);
     const saveOrder = await order.save();
@@ -474,7 +474,7 @@ app.post("/api/orders/create-new-order", async (req, res) => {
 });
 
 //Route to Fetch all past orders.
-app.get("/api/orders/get-all-orders", async(req, res) => {
+app.get("/api/orders/get_all_orders", async(req, res) => {
   try {
     const orderData = await Order.find().populate('products.product', 'shortTitle finalPrice');
     if (!orderData)
