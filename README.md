@@ -53,12 +53,12 @@ Sample Response:
 ### **GET	/api/products**	 	
 Route to fetch all products from the database.<br>
 Sample Response:
-```{ data: { products: [{ _id, shortTitle, fullTitle, mrpPrice, finalPrice, rating, qyantity, size, description, imageLink, addedToWishlist, category, createdAt, updatedAt, addedToCart }, ...] } }```
+```{ data: { products: [{ _id, shortTitle, fullTitle, ... }, ...] } }```
 
 ### **GET	/api/products/:productId**	 	
 Route to fetch Product from the database by its ID.<br>
 Sample Response:
-```{ data: { product: { _id, shortTitle, fullTitle, mrpPrice, finalPrice, rating, qyantity, size, description, imageLink, addedToWishlist, category, createdAt, updatedAt, addedToCart } } }```
+```{ data: { product: { _id, shortTitle, fullTitle, ... } } }```
 
 ### **PATCH	/api/products/by_category/:categoryName**	 	
 Route to add/remove (toggle) product from wishlist with product ID.<br>
@@ -68,7 +68,7 @@ Sample Response:
 ### **GET	/api/products/wishlist_items/wishlist**	 	
 Route to fetch only those products which are present in wishlist.<br>
 Sample Response:
-```{ data: { product: { _id, shortTitle, fullTitle, mrpPrice, finalPrice, rating, qyantity, size, description, imageLink, addedToWishlist, category, createdAt, updatedAt, addedToCart } } }```
+```{ data: { product: { _id, shortTitle, fullTitle, mrpPrice, ... } } }```
 
 ### **POST	/api/products/add_to_cart/:productId/:specs**	 	
 To add a product with particular specification (could be size or anything else for another category) in cart.<br>
@@ -83,7 +83,7 @@ Sample Response:
 ### **GET	/api/products/get_cart_items/cart**	 	
 Route to fetch all products present in cart.<br>
 Sample Response:
-```{ cartItems: [{ _id, shortTitle, fullTitle, mrpPrice, finalPrice, rating, qyantity, size, description, imageLink, addedToWishlist, category, createdAt, updatedAt, addedToCart }, ...] }```
+```{ cartItems: [{ _id, shortTitle, fullTitle, mrpPrice, ... }, ...] }```
 
 ### **PATCH	/api/products/remove_all_cart_items**	 	
 Route to remove all items from cart.<br>
@@ -98,7 +98,7 @@ Sample Response:
 ### **GET	api/address/get_all_address**	 	
 Route to fetch all addresses.<br>	
 Sample Response:
-```{ addresses: [{ _id, name, mobileNumber, pincode, detailedAddress, city, state, defaultAddress }, ...] }```
+```{ addresses: [{ _id, name, mobileNumber, pincode, ... }, ...] }```
 
 ### **DELETE	/api/address/delete_address/:addressID**	 	
 Route to delete address by ID.<br>	
@@ -113,7 +113,7 @@ Sample Response:
 ### **GET	/api/address/fetch_default_address**	 	
 Route to fetch the default address.<br>	
 Sample Response:
-```{ address: { _id, name, mobileNumber, pincode, detailedAddress, city, state, defaultAddress } }```
+```{ address: { _id, name, mobileNumber, pincode, ... } }```
 
 ### **POST	/api/orders/create_new_order**	 	
 Route to create a new Order Entry.<br>	
@@ -123,7 +123,7 @@ Sample Response:
 ### **GET	/api/orders/get_all_orders**	 	
 Route to Fetch all past orders.<br>	
 Sample Response:
-```{ orders: [{ _id, address: { name, mobileNumber, pincode, detailedAddress, city, state }, products: [{ product: { _id, shortTitle, finalPrice }, quantity, _id }, ...] }, ...] }```
+```{ orders: [{ _id, address: { name, mobileNumber, pincode, ... }, products: [{ product: { _id, shortTitle, finalPrice }, quantity, _id }, ...] }, ...] }```
 
 ## Contact
 For bugs or feature requests, please reach out to sahaarnav3@gmail.com
